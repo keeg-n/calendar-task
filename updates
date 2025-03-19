@@ -1,0 +1,16 @@
+Updates // Milestone 2 Changesw
+1) File Handling
+
+Saves tasks to a file upon exit.
+Loads tasks from a file on startup.
+2) Sorting
+
+Uses Collections.sort() to sort tasks by due date.
+Recursion
+
+3) Recursively counts completed tasks.
+New Features
+
+Task management (existing).
+Reward system (existing).
+Theme customization (new).

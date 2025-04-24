@@ -1,59 +1,114 @@
+import javax.swing.*;
+import java.time.LocalDate;
 import java.util.Scanner;
 
-/**
- * Main class to run the Calendar Application.
- */
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        System.out.println("""
+                
+                ✨ Welcome to the Calendar Task App! ✨
+                1. Launch GUI
+                2. Use Command-Line (CLI)
+                3. Exit
+                """);
+        System.out.print("Select an option: ");
+        String choice = scanner.nextLine();
 
-        System.out.print("Enter your username: ");
-        String username = scanner.nextLine();
-        User user = new User(username);
+        switch (choice) {
+            case "1" -> SwingUtilities.invokeLater(LoginGUI::new);
+            case "2" -> runCLI(scanner);
+            case "3" -> {
+                System.out.println("Goodbye! 👋");
+                System.exit(0);
+            }
+            default -> System.out.println("Invalid choice. Restart and try again.");
+        }
+    }
+
+    public static void runCLI(Scanner scanner) {
+        User user = null;
 
         while (true) {
-            System.out.println("\n1. Add Task\n2. Complete Task\n3. View Tasks\n4. View Rewards\n5. Save Tasks\n6. Load Tasks\n7. Exit");
+            if (user == null) {
+                System.out.print("\nEnter your username (or type 'exit' to quit): ");
+                String username = scanner.nextLine();
+                if (username.equalsIgnoreCase("exit")) break;
+
+                user = FileHandler.loadTasksFromFile(username);
+                if (user == null) {
+                    user = new User(username);
+                    System.out.println("New user created.");
+                }
+
+                System.out.println("\n🔔 Overdue Tasks:");
+                user.displayOverdueTasks();
+            }
+
+            System.out.println("""
+                    
+                    📋 MENU
+                    1. Add Task
+                    2. Complete Task
+                    3. Change Task
+                    4. Remove Task
+                    5. View Tasks
+                    6. View Rewards
+                    7. Save Tasks
+                    8. Logout
+                    9. Exit
+                    """);
+
             System.out.print("Choose an option: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine();  // Consume newline
+            int choice = Integer.parseInt(scanner.nextLine());
 
             switch (choice) {
-                case 1:
+                case 1 -> {
                     System.out.print("Enter task title: ");
                     String title = scanner.nextLine();
-                    System.out.print("Enter task description: ");
-                    String description = scanner.nextLine();
-                    System.out.print("Enter task due date (YYYY-MM-DD): ");
-                    String dueDate = scanner.nextLine();
-                    user.addTask(new Task(title, description, dueDate));
-                    break;
-                case 2:
-                    System.out.print("Enter task title to complete: ");
-                    String taskToComplete = scanner.nextLine();
-                    user.completeTask(taskToComplete);
-                    break;
-                case 3:
-                    user.displayTasks();
-                    break;
-                case 4:
-                    user.getRewardSystem().displayRewards();
-                    break;
-                case 5:
+                    System.out.print("Enter description: ");
+                    String desc = scanner.nextLine();
+                    System.out.print("Enter due date (YYYY-MM-DD): ");
+                    String due = scanner.nextLine();
+                    user.addTask(new Task(title, desc, LocalDate.parse(due)));
+                }
+                case 2 -> {
+                    System.out.print("Enter title of task to complete: ");
+                    user.completeTask(scanner.nextLine());
+                }
+                case 3 -> {
+                    System.out.print("Enter title of task to change: ");
+                    String oldTitle = scanner.nextLine();
+                    System.out.print("New title: ");
+                    String newTitle = scanner.nextLine();
+                    System.out.print("New description: ");
+                    String newDesc = scanner.nextLine();
+                    System.out.print("New due date (YYYY-MM-DD): ");
+                    String newDate = scanner.nextLine();
+                    user.changeTask(oldTitle, newTitle, newDesc, newDate);
+                }
+                case 4 -> {
+                    System.out.print("Enter title of task to remove: ");
+                    user.removeTask(scanner.nextLine());
+                }
+                case 5 -> user.displayTasks();
+                case 6 -> user.getRewardSystem().displayProgress();
+                case 7 -> {
                     FileHandler.saveTasksToFile(user);
-                    System.out.println("Tasks saved successfully.");
-                    break;
-                case 6:
-                    user = FileHandler.loadTasksFromFile(username);
-                    if (user == null) {
-                        user = new User(username);
-                    }
-                    break;
-                case 7:
-                    System.out.println("Exiting application.");
+                    System.out.println("Tasks saved.");
+                }
+                case 8 -> {
+                    FileHandler.saveTasksToFile(user);
+                    user = null;
+                    System.out.println("Logged out.");
+                }
+                case 9 -> {
+                    System.out.println("Exiting...");
+                    FileHandler.saveTasksToFile(user);
                     scanner.close();
                     return;
-                default:
-                    System.out.println("Invalid option. Please try again.");
+                }
+                default -> System.out.println("Invalid choice.");
             }
         }
     }

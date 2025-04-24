@@ -1,4 +1,4 @@
-Updates // Milestone 2 Changesw
+Updates // Milestone 2 Changes
 1) File Handling
 
 Saves tasks to a file upon exit.
@@ -12,5 +12,12 @@ Recursion
 New Features
 
 Task management (existing).
-Reward system (existing).
-Theme customization (new).
+Reward system (existing/wip).
+Theme customization (wip).
+
+Future Updates:
+Want to implement the load task feature to work in ties with a sign in feature
+ that'll save tasks for the specified user.
+ Want to still implement theme and a better reward system but may be a bit of a reach in the way I'm
+ wanting to currently, but wip as well.
+ Also working on GUI and currently don't have a set idea but want to make it visually pleasing and easy to understand
